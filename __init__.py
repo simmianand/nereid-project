@@ -6,12 +6,16 @@
     :license: GPLv3, see LICENSE for more details
 
 '''
+import project
+import company
+import iteration
 from trytond.pool import Pool
 
 from project import WebSite, ProjectUsers, ProjectInvitation, \
     ProjectWorkInvitation, Project, Tag, TaskTags, \
     ProjectHistory, ProjectWorkCommit
 from company import Company, CompanyProjectAdmins, NereidUser
+from iteration import ProjectIteration, Work
 
 
 def register():
@@ -30,5 +34,7 @@ def register():
         Company,
         CompanyProjectAdmins,
         NereidUser,
+        ProjectIteration,
+        Work,
         module='nereid_project', type_='model',
     )

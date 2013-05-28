@@ -59,6 +59,42 @@
   {% endif %}
 </ul>
 
+<!-- Modal for new iteration -->
+<div class="modal fade" id="new-iteration" aria-hidden="true" style="display: none; ">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>{{ _('Create New Iteration') }}</h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-vertical well" id="new-iteration-form" method="POST" 
+        action="{{ url_for('project.iteration.create_iteration', project_id=project.id) }}">
+      <label for="name">Iteration Title:</label>
+      <input class="span12" type="text" placeholder="Iteration Name"
+        name="name" required="required" id="name"/>
+      <label for="start_date">Iteration should start and finish by:</label>
+      <div class="input-append date datepicker span4">
+        <input class="datepicker span10" type="text" name="start_date" readonly="" required="required">
+        <span class="add-on" rel="tooltip" title="Select Start Date"><i class="icon-calendar"></i></span>
+      </div>
+      <div class="input-append date datepicker span4 offset1">
+        <input class="datepicker span10" type="text" name="end_date" readonly="" required="required">
+        <span class="add-on" rel="tooltip" title="Select Finish Date"><i class="icon-calendar"></i></span>
+      </div>
+
+      <a class="btn clear-date offset1" rel="tooltip" title="Clear Dates"><i class="icon-remove-sign"></i></a>
+      <br/>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-info pull-right span6 offset3" 
+          id="create_new_project" data-loading-text="Creating New Project">
+          <i class="icon-plus icon-white"></i> {{ _('Save') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
 <!-- Modal for new task -->
 <div class="modal fade" id="new-task" aria-hidden="true" style="display: none; ">
   <div class="modal-header">
@@ -117,6 +153,11 @@
   <li>
     <a data-toggle="modal" href="#new-task">
       <i class="icon-plus"></i> {{ _("New Task") }}
+    </a>
+  </li>
+  <li>
+    <a data-toggle="modal" href="#new-iteration">
+      <i class="icon-plus"></i>{{ _("New Iteration") }}
     </a>
   </li>
   <hr>

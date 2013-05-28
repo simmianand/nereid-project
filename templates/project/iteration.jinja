@@ -1,0 +1,52 @@
+{% extends 'project/project.jinja' %}
+
+{% from "_helpers.jinja" import render_pagination %}
+
+{% block breadcrumb %}
+{{ super() }}
+<li class="divider">/</li>
+<li><a href="{{ url_for('project.work.render_iteration_list', project_id=project.id) }}">{{ _('Iterations') }}</a></li>
+<li class="divider">/</li>
+<li><a href="{{ url_for('project.work.render_iteration', project_id=project.id, iteration_id=iteration.id) }}">{{ iteration.name }}</a></li>
+{% endblock %}
+
+{% block title %}
+{{ _("Iteration @%d: " % iteration.id) + iteration.name }}
+{% endblock %}
+
+{% block left %}
+<ul class="nav nav-tabs nav-stacked">
+  <li>
+    <a href="{{ url_for('project.work.render_iteration_list', project_id=project.id) }}"><i class="icon-arrow-left"></i> Back to iterations list</a>
+  </li>
+</ul>
+
+<hr/>
+
+{% if request.nereid_user.is_project_admin() %}
+<hr>
+<h4>Delete iteration
+
+<!-- Modal for warning about deletion of iteration -->
+<div class="modal fade" id="modal-delete-iteration">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h4>{{ _('Are you ABSOLUTELY sure?') }}</h4>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-block alert-error iteration-delete-message">
+      <h5><i class="icon-warning-sign" style="font-size:32px;"></i> Unexpected bad things will happen if you don't read this</h5>
+      <h6>This action CANNOT be undone. This will delete the <strong>{{ iteration.name }}</strong> iteration, time logged and comments permanently.</h6>
+      <hr/>
+      <a href="{{ url_for('project.iteration.delete_iteration', iteration_id=iteration.id) }}" class="btn btn-danger">{{ _('Delete') }}</a>
+      <a class="btn cancel-delete-iteration" data-dismiss="modal">{{ _('Cancel') }}</a>
+    </div>
+  </div>
+</div>
+<a class="btn btn-danger pull-right delete-iteration" data-toggle="modal" href="#modal-delete-iteration"><i class="icon-minus-sign"></i></a>
+<br/>
+<small>{{ _('Once deleted, there is no going back') }}</small>
+</h4>
+{% endif %}
+
+{% endblock %}

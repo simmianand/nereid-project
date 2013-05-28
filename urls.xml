@@ -273,5 +273,45 @@
             <field name="sequence" eval="60" />
             <field name="url_map" ref="nereid.default_url_map" />
         </record>
+        <record id="project_iteration" model="nereid.url_rule">
+            <field name="rule">/&lt;language&gt;/project-&lt;int:project_id&gt;/iteration-&lt;int:iteration_id&gt;</field>
+            <field name="endpoint">project.work.render_iteration</field>
+            <field name="sequence" eval="60" />
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+        <record id="project_iteration_list" model="nereid.url_rule">
+            <field name="rule">/&lt;language&gt;/project-&lt;int:project_id&gt;/iteration-list</field>
+            <field name="endpoint">project.work.render_iteration_list</field>
+            <field name="sequence" eval="60" />
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+        <record id="project_delete_iteration" model="nereid.url_rule">
+            <field name="rule">/&lt;language&gt;/project-&lt;int:project_id&gt;/iteration-&lt;int:active_id&gt;/-delete</field>
+            <field name="endpoint">project.iteration.delete_iteration</field>
+            <field name="sequence" eval="60" />
+            <field name="http_method_post" eval="True"/>
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+
+        <!-- Iterations -->
+        <record id="iteration_list" model="nereid.url_rule">
+            <field name="rule">/&lt;language&gt;/project-&lt;int:project_id&gt;/iterations</field>
+            <field name="endpoint">project.iteration.render_list</field>
+            <field name="sequence" eval="60" />
+            <field name="http_method_get" eval="True"/>
+            <field name="http_method_post" eval="True"/>
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+        <record id="iterations" model="nereid.url_rule">
+            <field name="rule">/&lt;language&gt;/project-&lt;int:project_id&gt;/iterations/iteration-&lt;int:active_id&gt;</field>
+            <field name="endpoint">project.iteration.render</field>
+            <field name="sequence" eval="60" />
+            <field name="http_method_get" eval="True"/>
+            <field name="http_method_post" eval="True"/>
+            <field name="http_method_put" eval="True"/>
+            <field name="http_method_delete" eval="True"/>
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+
     </data>
 </tryton>

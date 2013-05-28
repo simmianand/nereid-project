@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!-- This file is part of nereid-project. The COPYRIGHT file at the top level
+of this repository contains the full copyright notices and license terms. -->
+<tryton>
+    <data>
+
+        <record model="ir.ui.view" id="work_view_form1">
+            <field name="model">project.work</field>
+            <field name="inherit" ref="project.work_view_form"/>
+            <field name="arch" type="xml">
+                <![CDATA[
+                <data>
+                    <xpath expr="//field[@name=&quot;company&quot;]" position="after">
+                        <label name="iteration" />
+                        <field name="iteration" />
+                    </xpath>
+                </data>
+                ]]>
+            </field>
+        </record>
+             
+        <!-- Project Iteration-->
+        <record model="ir.ui.view" id="iteration_view_form">
+            <field name="model">project.iteration</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <![CDATA[
+                    <form string="Iteration">
+                        <label name="name" />
+                        <field name="name" />
+                        <label name="project" />
+                        <field name="project" />
+                        <newline/>
+                        <label name="start_date" />
+                        <field name="start_date" />
+                        <label name="end_date" />
+                        <field name="end_date" />
+                      <notebook colspan="4">
+                        <page string="Items" id="items" col="1">
+                            <label name="items" />
+                            <field name="items" />
+                        </page>
+                      </notebook>
+                    </form>
+                  ]]>
+              </field>
+          </record>
+          <record model="ir.ui.view" id="iteration_view_tree">
+              <field name="model">project.iteration</field>
+              <field name="type">tree</field>
+              <field name="arch" type="xml">
+                  <![CDATA[
+                  <tree string="Iterations">
+                      <field name="name" />
+                      <field name="start_date" />
+                      <field name="end_date" />
+                      <field name="project" />
+                  </tree>
+                  ]]>
+              </field>
+          </record>
+
+          <record model="ir.action.act_window" id="act_iteration_form">
+              <field name="name">Iterations</field>
+              <field name="res_model">project.iteration</field>
+          </record>
+
+          <record model="ir.action.act_window.view" id="act_iteration_form_view1">
+              <field name="sequence" eval="10" />
+              <field name="view" ref="iteration_view_tree" />
+              <field name="act_window" ref="act_iteration_form" />
+          </record>
+
+          <record model="ir.action.act_window.view" id="act_work_period_form_view2">
+            <field name="sequence" eval="20" />
+            <field name="view" ref="iteration_view_form" />
+            <field name="act_window" ref="act_iteration_form" />
+        </record>
+
+        <menuitem parent="project.menu_project_tree" action="act_iteration_form"
+            id="menu_iteration" sequence="100" />
+
+    </data>
+</tryton>
