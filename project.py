@@ -865,7 +865,7 @@ class Project:
         return render_template(
             'project/project-task-list.jinja', project=project,
             active_type_name='render_task_list', counts=counts,
-            state_filter=state, tasks=tasks
+            state_filter=state, tasks=tasks, user=user
         )
 
     @classmethod
@@ -1314,10 +1314,21 @@ class Project:
         '''
         Returns rendered task, for employee.
         '''
-        open_tasks = cls.search([
+        Employee = Pool().get('company.employee')
+
+        domain = [
             ('state', '=', 'opened'),
-            ('assigned_to.employee', '!=', None),
-            ], order=[('assigned_to', 'ASC')]
+        ]
+        all_employees = Employee.search([])
+
+        employee = request.values.get('employee', None, int)
+        if employee:
+            domain.append(('assigned_to.employee', '=', employee))
+        else:
+            domain.append(('assigned_to.employee', '!=', None))
+
+        open_tasks = cls.search(
+            domain, order=[('assigned_to', 'ASC')]
         )
         tasks_by_employee_by_state = defaultdict(lambda: defaultdict(list))
         for task in open_tasks:
@@ -1326,11 +1337,12 @@ class Project:
             ].append(task)
         employees = tasks_by_employee_by_state.keys()
         employees.sort()
+
         return render_template(
             'project/tasks-by-employee.jinja',
             tasks_by_employee_by_state=tasks_by_employee_by_state,
-            employees=employees,
-            states=PROGRESS_STATES,
+            employees=employees, employee=employee,
+            all_employees=all_employees, states=PROGRESS_STATES,
         )
 
     @classmethod

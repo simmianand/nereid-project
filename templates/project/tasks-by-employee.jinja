@@ -23,9 +23,23 @@
 {% block container %}
 
 <div class="row-fluid">
+  <div class="row-fluid">
+    <div class="span3 pull-right">
+      <form id="search_form">
+        <select id="employee" class="pull-right chzn-select" name="employee">
+          <option value="">All</option>
+            {% for participant in all_employees %}
+              <option value="{{ participant.id }}" {% if employee == participant.id %}selected{% endif %}>
+                {{ participant.name }}
+              </option>
+            {% endfor %}
+        </select>
+      </form>
+    </div>
+  </div>  
   <div class="pagination">
     <ul class="span1">
-      <li class="span12"><a class="span12">Employee</a></li>
+      <li class="span12"><a>Employee</a></li>
     </ul>
     <ul class="span11">
       {% for state, state_name in states %}
@@ -57,4 +71,14 @@
   {% endfor %}
 
 </div>
-{% endblock  %}
+{% endblock %}
+
+{% block scripts %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#employee").change(function() {
+        $("#search_form").submit();
+      });
+    });
+</script>
+{% endblock %}

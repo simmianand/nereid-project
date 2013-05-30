@@ -42,46 +42,65 @@
   <hr/>
   <ul id="task-list-tab" class="nav nav-tabs">
     <li class="{% if state_filter == None %}active{% endif %} ">
-      <a href="{{ url_for('project.work.render_task_list', project_id=project.id, q=request.args.get('q', None)) }}">All Tasks</a>
+      <a href="{{ url_for('project.work.render_task_list', project_id=project.id, q=request.args.get('q', None), user=request.args.get('user', None)) }}">All Tasks</a>
     </li>
     <li class="{% if state_filter == 'opened' %}active{% endif %} ">
-      <a href="{{ url_for('project.work.render_task_list', project_id=project.id, state='opened', q=request.args.get('q', None)) }}">{{ counts['opened_tasks_count'] }} Open Tasks</a>
+      <a href="{{ url_for('project.work.render_task_list', project_id=project.id, state='opened', q=request.args.get('q', None), user=request.args.get('user', None)) }}">{{ counts['opened_tasks_count'] }} Open Tasks</a>
     </li>
     <li class="{% if state_filter == 'done' %}active{% endif %} ">
-      <a href="{{ url_for('project.work.render_task_list', project_id=project.id, state='done', q=request.args.get('q', None)) }}">{{ counts['done_tasks_count'] }} Done Tasks</a>
+      <a href="{{ url_for('project.work.render_task_list', project_id=project.id, state='done', q=request.args.get('q', None), user=request.args.get('user', None)) }}">{{ counts['done_tasks_count'] }} Done Tasks</a>
     </li>           
   </ul>
-
-  <div id="myTabContent" class="tab-content">
-    <div class="row-fluid">
-      <div class="span7 pull-right">
-        <form>
-          <div class="control-group">
-            <div class="controls">
-              <div class="input-append">
-              <input type="hidden" name="state" value="{{ state_filter }}"/>
-                <input class="span4" id="search-tasks" name="q"
-                  size="16" type="text" placeholder="Search Tasks"
-                  value="{{ request.args.get('q', '') }}">
-                <button class="btn" type="button">
-                  <i class="icon-search"></i>
-                </button>
-                <a class="btn" title="Clear Search" href="{{ url_for('project.work.render_task_list', project_id=project.id, state=state_filter) }}">
-                  <i class="icon-refresh"></i> Clear
-                </a>
-              </div>
-            </div>
-          </div>
-        </form>
+  <div class="row-fluid">
+    <form id="search_form">
+      <div class="span3">
+        <select name="user" id="employee" class="pull-right chzn-select">
+          <option value="">All</option>
+            {% for participant in project.all_participants %}
+              <option value="{{ participant.id }}" {% if user == participant.id  %}selected="selected"{% endif %} >{{ participant.display_name }}</option>
+            {% endfor %}
+        </select>
       </div>
+      <div class="control-group">
+        <div class="controls">
+          <div class="input-append">
+          <input type="hidden" name="state" value="{{ state_filter }}"/>
+            <input class="span4" id="search-tasks" name="q"
+              size="16" type="text" placeholder="Search Tasks"
+              value="{{ request.args.get('q', '') }}">
+            <button class="btn" type="submit">
+              <i class="icon-search"></i>
+            </button>
+            <a class="btn" title="Clear Search" href="{{ url_for('project.work.render_task_list', project_id=project.id, state=state_filter) }}">
+              <i class="icon-refresh"></i> Clear
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  {# For search.#}
+  {% if not tasks and project.children %}
+    <div class="alert alert-block">
+      <h4>
+        <i class="icon-warning-sign"></i>
+          <font color="#808080">
+            No task found in this project matching your search filters.
+          </font>
+      </h4>
+      <p>
+        You can see the list of all tasks in this project
+          <a href="{{ url_for('project.work.render_task_list', project_id=project.id, state='None') }}">here</a>
+      </p> 
+    </div>
+  {% endif %}
 
       {% if tasks.pages > 1 %}
       <div class="span5">
         {{ render_pagination(tasks, None, 'project.work.render_task_list', project_id=project.id) }}
       </div>
       {% endif %}
-    </div>
-  </div>
 
   {% for task in tasks %}
   {{ render_task_tree(task) }}
@@ -96,6 +115,10 @@
     $('a.notify-people').click(function() {
       $(this).parents("form").find("tr.people-to-notify").show();
       $(this).parents("form").find("tr.people-to-notify select").focus();
+    });
+    $("#employee").chosen().change(function() {
+      $("#search_tasks").val('');
+      $("#search_form").submit();
     });
   });
 </script>
