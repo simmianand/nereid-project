@@ -17,6 +17,19 @@
 </div>
 
 <div class="row-fluid">
+  <div class="row-fluid">
+    <div class="span3 pull-right">
+      <form id="search_form">
+        <select id="employee" class="pull-right chzn-select" data-placeholder="Search by project">
+          <option value=""></option>
+          {% for project in projects %}
+            <option value="{{ project.id }}">{{ project.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
+  </div>
   <div class="pagination">
     <ul class="span12">
       {% for state, state_name in states %}

@@ -876,6 +876,12 @@ class Project:
         """
         state = request.args.get('state', None)
 
+        projects = cls.search([
+            ('participants', '=', request.nereid_user.id),
+            ('type', '=', 'project'),
+            ('parent', '=', False),
+        ])
+
         filter_domain = [
             ('type', '=', 'task'),
             ('assigned_to', '=', request.nereid_user.id)
@@ -915,7 +921,7 @@ class Project:
             'project/global-task-list.jinja',
             active_type_name='render_task_list', counts=counts,
             state_filter=state, tasks_by_state=tasks_by_state,
-            states=PROGRESS_STATES
+            states=PROGRESS_STATES, projects=projects
         )
 
     @classmethod
