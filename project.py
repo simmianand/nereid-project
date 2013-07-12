@@ -1585,12 +1585,18 @@ class Project:
             )
 
         hours = request.form.get('hours', None, type=float)
-        if hours and request.nereid_user.employee:
+        print ">>>>>>>>>", hours
+
+        if hours and hours < float(12.0) and request.nereid_user.employee:
             TimesheetLine.create({
                 'employee': request.nereid_user.employee.id,
                 'hours': hours,
                 'work': task.id
             })
+        else:
+            flash('Time marked is greater than 12 hours')
+            return redirect(request.referrer)
+
 
         # Send the email since all thats required is done
         comment.send_mail()
