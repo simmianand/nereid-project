@@ -418,17 +418,35 @@ class Project:
 
         :param values: Values to create project.
         '''
+        Activity = Pool().get('nereid.activity')
+
+        result = super(Project, cls).create(values)
         if has_request_context():
             values['created_by'] = request.nereid_user.id
+            Activity.create({
+                'actor': values.get('created_by'),
+                'object_': 'project.work, %d' % result.id,
+                'verb': 'created',
+            })
             if values['type'] == 'task':
                 values.setdefault('participants', [])
                 values['participants'].append(
                     ('add', [request.nereid_user.id])
                 )
+                Activity.create({
+                    'actor': values.get('created_by'),
+                    'object_': 'project.work, %d' % result.id,
+                    'verb': 'created',
+                })
         else:
             # TODO: identify the nereid user through employee
-            pass
-        return super(Project, cls).create(values)
+            Activity.create({
+                'actor': values.get('created_by'),
+                'object_': 'project.work, %d' % result.id,
+                'verb': 'created',
+            })
+
+        return result
 
     def can_read(self, user):
         """
@@ -2069,7 +2087,6 @@ class ProjectHistory(ModelSQL, ModelView):
         Update a specific comment.
         """
         Project = Pool().get('project.work')
-
         # allow modification only if the user is an admin or the author of
         # this ticket
         task = Project(task_id)
@@ -2137,6 +2154,24 @@ class ProjectHistory(ModelSQL, ModelView):
         server.sendmail(CONFIG['smtp_from'], receivers,
             message.as_string())
         server.quit()
+
+    @classmethod
+    def create(cls, values):
+        '''
+        Creates activity stream on creation of history
+
+        :param values: dictionary of field name and corresponding value
+        :return: ID of the created record
+        '''
+        Activity = Pool().get('nereid.activity')
+
+        result = super(ProjectHistory, cls).create(values)
+
+        data = {
+            'actor': values.get('updated_by'),
+            'object_': '',
+            'verb': 'commented'
+            '
 
 
 class ProjectWorkCommit(ModelSQL, ModelView):
